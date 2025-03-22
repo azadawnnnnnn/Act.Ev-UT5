@@ -24,6 +24,8 @@ public class Registro extends javax.swing.JFrame {
 
     public Registro() {
         initComponents();
+        setSize(400, 300); 
+        setLocationRelativeTo(null);
     }
 
     private void initComponents() {
@@ -125,31 +127,54 @@ public class Registro extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Registro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+    }    
 
-       // java.awt.EventQueue.invokeLater(new Runnable() {
-        //    public void run() {
-          //      new Registro().setVisible(true);
-            //}
-        //});
-    }            
-
+    // Método para registrar usuario
     private void registrarUsuario() {
         String correo = jTextField1.getText();
         String contrasena = new String(jPasswordField1.getPassword());
 
+        // Comprobamos que escribió en los dos campos
         if (correo.isEmpty() || contrasena.isEmpty()) {
             jLabel4.setText("Por favor, complete ambos campos.");
             return;
+        
+            /** 
+             * Si escribió en los dos campos y el correo tiene formato valido, 
+             * hasheamos y guardamos los valores, 
+             * mostrando la ventana de inicio de sesión de nuevo.
+            */
         } else {
+
+            if (!validarCorreo(correo)) {
+                jLabel4.setVisible(true);
+                jLabel4.setText("Formato inválido de correo electrónico.");
+                jLabel4.setForeground(new java.awt.Color(255, 0, 0));
+                return;
+            }
+
             String contraseniaHash = hasheoPasswd(contrasena);
         
             guardarUsuarios(correo, contraseniaHash);
             jLabel4.setText("¡Registro exitoso!");
             jLabel4.setForeground(new java.awt.Color(0, 128, 0));
+                
+            Login login = new Login();
+            login.setVisible(true);
+            this.dispose(); // 
         }
     }
 
-    private String hasheoPasswd(String password){
+    private Boolean validarCorreo(String correo) {
+        // Expresión regular para validar el formato del correo
+        String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+    
+        // Verificar si el correo coincide con la expresión regular
+        return correo.matches(regex);
+    }
+
+    // Método para hashear contraseña
+    static String hasheoPasswd(String password){
 
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -166,6 +191,7 @@ public class Registro extends javax.swing.JFrame {
         }
     }
 
+    // Método para guardar el usuario y contraseña hasheada en fichero
     public static void guardarUsuarios(String usuario, String contrasenia){
 
         try (FileWriter writer = new FileWriter("src/data/users.txt", true)) { // `true` para no sobrescribir el archivo

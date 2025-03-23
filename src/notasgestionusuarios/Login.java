@@ -18,10 +18,12 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JTextField jTextField1;
+    static javax.swing.JTextField jTextField1;
 
     public Login() {
         initComponents();
+        setSize(400, 300); 
+        setLocationRelativeTo(null);
     }
                       
     private void initComponents() {
@@ -148,9 +150,12 @@ public class Login extends javax.swing.JFrame {
             jButton2.setVisible(true); // Ocultar el botón al inicio
 
         } else {
-            jLabel4.setText("¡Login exitoso!");
-            jLabel4.setForeground(new java.awt.Color(0, 128, 0));
-            // Aquí podrías agregar la lógica para redirigir a otra pantalla
+            jLabel4.setVisible(false);
+            jButton2.setVisible(false);
+
+            Notas notas = new Notas(correo);
+            notas.setVisible(true);
+            this.dispose(); // 
         }
     }
 
@@ -163,9 +168,11 @@ public class Login extends javax.swing.JFrame {
                 String[] partes = linea.split(":");
                 String correoGuardado = partes[0];
                 String contrasenaGuardada = partes[1];
+
+                String contrasenaHash = Registro.hasheoPasswd(contrasena);
                 
                 // Comparamos lo escrito por el usuario y los valores que existen en el fichero
-                if (correo.equals(correoGuardado) && contrasena.equals(contrasenaGuardada)) {
+                if (correo.equals(correoGuardado) && contrasenaHash.equals(contrasenaGuardada)) {
                     return true; 
                 }
             }
@@ -176,10 +183,11 @@ public class Login extends javax.swing.JFrame {
         return false; // Usuario no encontrado o contraseña incorrecta
     }
 
+    // Método para iniciar la ventana de Registro y mostrarla
     private void abrirRegistro() {
         Registro registro = new Registro();
         registro.setVisible(true);
-        this.dispose();
+        this.dispose(); // 
     }
 
     // Método Principal

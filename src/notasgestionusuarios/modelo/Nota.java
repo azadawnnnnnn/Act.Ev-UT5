@@ -1,8 +1,8 @@
 package src.notasgestionusuarios.modelo;
 
-// Esta clase representa una nota con su título y contenido
+/* Clase para crear las notas */
 public class Nota {
-    // Variables para guardar el título y contenido de la nota
+    // Variables de la nota
     private String titulo;
     private String contenido;
 
@@ -12,7 +12,7 @@ public class Nota {
         this.contenido = contenido;
     }
 
-    // Métodos get y set para acceder a las variables privadas
+    // Métodos getter y setter
     public String getTitulo() {
         return titulo;
     }
@@ -29,7 +29,7 @@ public class Nota {
         this.contenido = contenido;
     }
 
-    // Esto es para que se muestre el título en la lista
+    /* Esto es para que se vea el titulo en la lista */
     @Override
     public String toString() {
         return titulo;

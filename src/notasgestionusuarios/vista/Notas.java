@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 import javax.swing.DefaultListModel;
 import src.notasgestionusuarios.modelo.Nota;
 import java.util.ArrayList;
+import java.io.*;
 
 /**
  * @author Azael
@@ -11,26 +12,35 @@ import java.util.ArrayList;
 public class Notas extends javax.swing.JFrame {
 
     private String correoUsuario;
-    private DefaultListModel<String> listModel;  
-    private ArrayList<Nota> notas;  // Lista para almacenar las notas
+    private DefaultListModel<String> listaModelo;  
+    private ArrayList<Nota> listaNotas;  
 
     // Constructor con correo
     public Notas(String correoUsuario) {
         this.correoUsuario = correoUsuario;
-        initComponents(); // Inicializa los componentes antes de cambiar el título
-        listModel = new DefaultListModel<>();  // Initialize listModel
-        jLista.setModel(listModel);  // Set the model to JList
-        notas = new ArrayList<>();  // Initialize notas list
+        initComponents();
+        listaModelo = new DefaultListModel<>();
+        jLista.setModel(listaModelo);
+        listaNotas = new ArrayList<>();
         setTitle("Creador de Notas de " + correoUsuario);
+        
+        // creamos carpeta si no existe
+        File carpetaUser = new File("src/data/usuarios/" + correoUsuario);
+        if (!carpetaUser.exists()) {
+            carpetaUser.mkdirs();
+        }
+        
+        // pillamos las notas q habia antes
+        cargarNotas();
     }
 
     // Constructor sin parámetros
     public Notas() {
         initComponents();
-        listModel = new DefaultListModel<>();  // Initialize listModel
-        jLista.setModel(listModel);  // Set the model to JList
-        notas = new ArrayList<>();  // Initialize notas list
-        setTitle("Creador de Notas"); // Un título por defecto en caso de que no haya usuario
+        listaModelo = new DefaultListModel<>();  
+        jLista.setModel(listaModelo);  
+        listaNotas = new ArrayList<>();  
+        setTitle("Creador de Notas"); 
     }
 
     private void initComponents() {
@@ -62,17 +72,17 @@ public class Notas extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(153, 204, 255));
 
         btnCrear.setBackground(new java.awt.Color(51, 153, 255));
-        btnCrear.setFont(new java.awt.Font("Arial Black", 1, 12)); // NOI18N
+        btnCrear.setFont(new java.awt.Font("Arial Black", 1, 12)); 
         btnCrear.setForeground(new java.awt.Color(255, 255, 255));
         btnCrear.setText("Crear Nota");
 
         btnEditar.setBackground(new java.awt.Color(51, 153, 255));
-        btnEditar.setFont(new java.awt.Font("Arial Black", 1, 12)); // NOI18N
+        btnEditar.setFont(new java.awt.Font("Arial Black", 1, 12)); 
         btnEditar.setForeground(new java.awt.Color(255, 255, 255));
         btnEditar.setText("Editar Nota");
 
         btnEliminar.setBackground(new java.awt.Color(51, 153, 255));
-        btnEliminar.setFont(new java.awt.Font("Arial Black", 1, 12)); // NOI18N
+        btnEliminar.setFont(new java.awt.Font("Arial Black", 1, 12)); 
         btnEliminar.setForeground(new java.awt.Color(255, 255, 255));
         btnEliminar.setText("Eliminar Nota");
 
@@ -103,7 +113,7 @@ public class Notas extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(153, 204, 255));
         jPanel3.setForeground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); 
         jLabel1.setForeground(new java.awt.Color(0, 102, 255));
         jLabel1.setText("Título de la nota");
 
@@ -114,7 +124,7 @@ public class Notas extends javax.swing.JFrame {
         contentNota.setRows(5);
         jScrollPane2.setViewportView(contentNota);
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); 
         jLabel2.setForeground(new java.awt.Color(0, 102, 255));
         jLabel2.setText("Escriba lo que desee");
 
@@ -151,7 +161,7 @@ public class Notas extends javax.swing.JFrame {
         jPanel4.setBackground(new java.awt.Color(153, 204, 255));
 
         btnBuscar.setBackground(new java.awt.Color(51, 153, 255));
-        btnBuscar.setFont(new java.awt.Font("Arial Black", 1, 12)); // NOI18N
+        btnBuscar.setFont(new java.awt.Font("Arial Black", 1, 12)); 
         btnBuscar.setForeground(new java.awt.Color(255, 255, 255));
         btnBuscar.setText("Buscar Nota por título");
         btnBuscar.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -200,7 +210,7 @@ public class Notas extends javax.swing.JFrame {
         jPanel6.setBackground(new java.awt.Color(153, 204, 255));
 
         btnSignOut.setBackground(new java.awt.Color(255, 51, 51));
-        btnSignOut.setFont(new java.awt.Font("Arial Black", 1, 24)); // NOI18N
+        btnSignOut.setFont(new java.awt.Font("Arial Black", 1, 24)); 
         btnSignOut.setForeground(new java.awt.Color(255, 255, 255));
         btnSignOut.setText("Cerrar Sesión");
         btnSignOut.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -292,20 +302,19 @@ public class Notas extends javax.swing.JFrame {
         this.contentNota.setText(contenido);
     }
 
+    /* metodo para agregar nota nueva */
     private void agregarNota() {
         String titulo = textTitulo.getText().trim();
         String contenido = contentNota.getText().trim();
         if (!titulo.isEmpty() && !contenido.isEmpty()) {
-            // Crear una nueva instancia de Nota
-            Nota nuevaNota = new Nota(titulo, contenido);
+            // creo nota nueva
+            Nota notaNueva = new Nota(titulo, contenido);
             
-            // Añadimos la nota a la lista de notas
-            notas.add(nuevaNota);
+            // la meto en el array y en la lista
+            listaNotas.add(notaNueva);
+            listaModelo.addElement(titulo);
             
-            // Agregamos el título de la nota a la lista en la interfaz
-            listModel.addElement(titulo);
-            
-            // Limpiamos los campos de entrada para el próximo uso
+            // limpio los campos
             textTitulo.setText("");
             contentNota.setText("");
         } else {
@@ -313,61 +322,101 @@ public class Notas extends javax.swing.JFrame {
         }
     }
 
-    // Método se llama cuando pulsamos el botón de editar
+    // para editar la nota q seleccione
     private void editarNota() {
-        // Cogemos la nota seleccionada de la lista para editarla
-        int indice = jLista.getSelectedIndex();
-        if (indice != -1) {
-
-            Nota nota = notas.get(indice);
+        int pos = jLista.getSelectedIndex();
+        if (pos != -1) {
+            Nota nota = listaNotas.get(pos);
             
             textTitulo.setText(nota.getTitulo());
             contentNota.setText(nota.getContenido());
             
-            notas.remove(indice);
-            listModel.remove(indice);
+            listaNotas.remove(pos);
+            listaModelo.remove(pos);
         } else {
             JOptionPane.showMessageDialog(this, "Por favor, selecciona una nota para editar.");
         }
     }
 
-    // Método que borra la nota seleccionada
+    /* borra la nota */
     private void eliminarNota() {
-        int indice = jLista.getSelectedIndex();
-        if (indice != -1) {
-            // Borramos la nota de ambos sitios
-            notas.remove(indice);
-            listModel.remove(indice);
+        int pos = jLista.getSelectedIndex();
+        if (pos != -1) {
+            listaNotas.remove(pos);
+            listaModelo.remove(pos);
         } else {
             JOptionPane.showMessageDialog(this, "Por favor, selecciona una nota para eliminar.");
         }
     }
 
-    // Método que busca notas por su título
+    // busca las notas x el titulo
     private void buscarNota(String textoBuscar) {
-        // Si no hay texto, mostramos todas las notas
         if (textoBuscar.isEmpty()) {
-            listModel.clear();
-            for (Nota nota : notas) {
-                listModel.addElement(nota.getTitulo());
+            listaModelo.clear();
+            for (Nota nota : listaNotas) {
+                listaModelo.addElement(nota.getTitulo());
             }
             return;
         }
 
-        // Buscamos las notas que contengan el texto
-        listModel.clear();
-        for (Nota nota : notas) {
+        listaModelo.clear();
+        for (Nota nota : listaNotas) {
             if (nota.getTitulo().toLowerCase().contains(textoBuscar.toLowerCase())) {
-                listModel.addElement(nota.getTitulo());
+                listaModelo.addElement(nota.getTitulo());
             }
         }
     }
 
-    // Método que cierra la ventana cuando pulsamos Sign Out
+    // guarda todo antes d cerrar
+    private void guardarNotas() {
+        try {
+            File archivo = new File("src/data/usuarios/" + correoUsuario + "/notas.txt");
+            BufferedWriter writer = new BufferedWriter(new FileWriter(archivo));
+            
+            for (Nota nota : listaNotas) {
+                writer.write(nota.getTitulo() + " | | " + nota.getContenido());
+                writer.newLine();
+            }
+            
+            writer.close();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error al guardar las notas: " + e.getMessage());
+        }
+    }
+
+    // carga las notas del archivo
+    private void cargarNotas() {
+        try {
+            File archivo = new File("src/data/usuarios/" + correoUsuario + "/notas.txt");
+            if (!archivo.exists()) {
+                return;  // Si no hay archivo, no hacemos nada
+            }
+
+            BufferedReader reader = new BufferedReader(new FileReader(archivo));
+            String linea;
+            
+            while ((linea = reader.readLine()) != null) {
+                String[] partes = linea.split(" \\| \\| ");
+                if (partes.length == 2) {
+                    Nota nota = new Nota(partes[0], partes[1]);
+                    listaNotas.add(nota);
+                    listaModelo.addElement(nota.getTitulo());
+                }
+            }
+            
+            reader.close();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar las notas: " + e.getMessage());
+        }
+    }
+
+    // pa cerrar la ventana
     private void signOut() {
-        JOptionPane.showMessageDialog(this, "¡Vuelva prontooo " + correoUsuario + "!");
+        guardarNotas();
+        JOptionPane.showMessageDialog(this, "¡Vuelva pronto " + correoUsuario + "!");
         this.dispose();
     }
+
     // Método principal que inicia la aplicación
     public static void main(String args[]) {
         // Look and Feel Nimbus

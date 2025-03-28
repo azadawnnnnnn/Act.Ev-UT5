@@ -1,4 +1,4 @@
-    package src.notasgestionusuarios;
+    package src.notasgestionusuarios.vista;
 
     import java.io.FileWriter;
     import java.io.IOException;

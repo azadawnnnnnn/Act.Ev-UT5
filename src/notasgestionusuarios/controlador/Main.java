@@ -1,4 +1,6 @@
-package src.notasgestionusuarios;
+package src.notasgestionusuarios.controlador;
+
+import src.notasgestionusuarios.vista.Login;
 
 // Main para ejecutar la interfaz de login
 public class Main {

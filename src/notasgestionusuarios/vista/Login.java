@@ -1,4 +1,4 @@
-package src.notasgestionusuarios;
+package src.notasgestionusuarios.vista;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -152,7 +152,7 @@ public class Login extends javax.swing.JFrame {
         } else {
             jLabel4.setVisible(false);
             jButton2.setVisible(false);
-
+            System.out.println("Usuario inicia sesión correctamente.");
             Notas notas = new Notas(correo);
             notas.setVisible(true);
             this.dispose(); // 

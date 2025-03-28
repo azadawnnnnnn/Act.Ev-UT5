@@ -1,4 +1,4 @@
-package src.notasgestionusuarios;
+package src.notasgestionusuarios.modelo;
 
 import java.io.File;
 import java.io.IOException;

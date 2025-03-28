@@ -22,6 +22,7 @@ public class Registro extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JTextField jTextField1;  
 
+    // Constructor
     public Registro() {
         initComponents();
         setSize(400, 300); 
@@ -109,6 +110,8 @@ public class Registro extends javax.swing.JFrame {
 
         jButton1.addActionListener(e -> registrarUsuario());
     }
+
+    // Método principal que inicia la aplicación
     public static void main(String args[]) {
         
         try {
@@ -165,11 +168,12 @@ public class Registro extends javax.swing.JFrame {
         }
     }
 
+    // Método para validar el correo electrónico
     private Boolean validarCorreo(String correo) {
         // Expresión regular para validar el formato del correo
         String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     
-        // Verificar si el correo coincide con la expresión regular
+        // Verificamos si coincide con la expresión
         return correo.matches(regex);
     }
 
